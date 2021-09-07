@@ -1,24 +1,33 @@
-// Requiring chalk (because I didn't do that first before 😅) and Commands object ⬇⬇⬇
+// Requiring and Declaring ⬇⬇⬇
 
 var chalk = require('chalk');
+const internalIp = require('internal-ip')
+var config = require('../../console_server_config.json') // Goes from 'console-to-server' to 'node_modules' to the package base folder
+var enabled = process.env.CONSERV
 
 var Commands = {
 	array: [],
 	dict: {}
 }
 
+// Check environment varible
+enabled = (enabled != null)
+
 // Exported functions ⬇⬇⬇
 
 const print = function (stuff) {
 	console.log(stuff)
-	console_io.emit("print", stuff)
+	if (enabled) {
+		console_io.emit("print", stuff)
+	}
 }
 
 const print_debug = function(stuff) {
 	// console.log(stuff)
 	console.log(chalk.hex("#888888").italic(stuff))
-
-	console_io.emit("print", stuff)
+	if (enabled) {
+		console_io.emit("print", stuff)
+	}
 }
 
 // Server startup and configuration ⬇⬇⬇
@@ -58,15 +67,26 @@ class ConsoleCommand {
 
 // Reading Console Input ⬇⬇⬇
 
-rl.on('line', (input) => {
-  let args = input.split(" ")
-  let command_name = args.shift()
-  try {
-  	Commands.dict[command_name].exec(args)
-  } catch (err) {
-  	print_debug(String(err))
-  }
-})
+if (enabled) {
+	rl.on('line', (input) => {
+	  let run = false
+	  let args = input.split(" ")
+	  if (config.console.prefix) {
+		let prefix = args.shift()
+		run = (prefix == config.console.prefix)
+	  } else {
+		run = true
+	  }
+	  let command_name = args.shift()
+	  if (run) {
+		  try {
+			Commands.dict[command_name].exec(args)
+		  } catch (err) {
+			print_debug(String(err))
+		  }
+	  }
+	})
+}
 
 // Default Commands ⬇⬇⬇
 
@@ -100,12 +120,17 @@ console_app.get('/console', (req, res) => {
   res.sendFile(__dirname + '/console.html'); // Fix icon/logo/favicon thing
 })
 
-console_server.listen({
-	host: "192.168.1.240", // Make this dynamic to get current machine's ipv4 address and also interact with config json
-	port: 8000 // Make this interact with config json
-}, () => {
-	print('listening on *:8000'); // Make this dynamic config json
-})
+var server_host = (config.server.host ? config.server.host : internalIp.v4.sync())
+var server_port = (config.server.port ? config.server.port : 8000)
+
+if (enabled) {
+	console_server.listen({
+		host: server_host, // Make this dynamic to get current machine's ipv4 address and also interact with config json
+		port: server_port // Make this interact with config json
+	}, () => {
+		print(`listening on *:${server_port}`);
+	})
+}
 
 // Module Exports ⬇⬇⬇
 
@@ -118,11 +143,11 @@ module.exports = {
 // My personal to-do list ⬇⬇⬇
 
 // ## List of stuff to add
-// [ ] Get machine's IvP4 address to set default Host
-// [ ] Add in 'console_server_config.json' functionality
-// [ ] Host changes to 'console_server_config.json'
-// [ ] Port changes to 'console_server_config.json'
-// [ ] Prefix support (enabling and setting) in 'console_server_config.json'
+// [-] Get machine's IvP4 address to set default Host
+// [-] Add in 'console_server_config.json' functionality
+// [-] Host changes to 'console_server_config.json'
+// [-] Port changes to 'console_server_config.json'
+// [-] Prefix support (enabling and setting) in 'console_server_config.json'
 // [ ] Set custom HTML path in 'console_server_config.json'
 // [ ] Adjusting simple HTML parameters (styling, font, text size, show timestamps?) in 'console_server_config.json'
 // [ ] Fix icon/logo/favicon thing on html
