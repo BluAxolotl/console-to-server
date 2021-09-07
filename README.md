@@ -16,6 +16,16 @@ print_debug('stuff') // Grey & italics formatting
 ```
 And then hosts a server on from your machine's Ipv4 address *``192.168.1.240:8000/console``*
 
+## New ConsoleCommand
+```javascript
+const {print, print_debug} = require('console-to-server')
+const {ConsoleCommand} = require('console-to-server')
+
+new ConsoleCommand("name", "this is a description", ["none"], function () {
+    print("this is my custom command!")
+})
+```
+
 ## Configuration
 console_server_config.json
 ```json

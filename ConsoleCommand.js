@@ -94,7 +94,8 @@ console_server.listen({
 
 module.exports = {
     print: print,
-    print_debug: print_debug
+    print_debug: print_debug,
+    ConsoleCommand: ConsoleCommand
 }
 
 // ## List of stuff to add
@@ -104,3 +105,9 @@ module.exports = {
 // [ ] Port changes to 'console_server_config.json'
 // [ ] Prefix support (enabling and setting) in 'console_server_config.json'
 // [ ] Set custom HTML path in 'console_server_config.json'
+// [ ] Adjusting simple HTML parameters (styling, font, text size, show timestamps?) in 'console_server_config.json'
+// [ ] Fix icon/logo/favicon thing on html
+// [ ] Update README to show it working on mobile phone browser
+// [ ] Environmental Variable that toggles the module (off by default for deploying purposes)
+// ( ) Public Console feature: Allows people to view console server after being deployed (Oh?)
+// ( ) Look into directly streaming all console output
