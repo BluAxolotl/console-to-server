@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <link rel="icon" href="https://i.imgur.com/kKe8Sa3.png">
+        <style>
+            body {
+                background:  #12171D
+            }
+
+            .log_message {
+                color:  white;
+            }
+        </style>
+    </head>
+    <body>
+        <div id="consolelog">
+        </div>
+        <script src="/socket.io/socket.io.js"></script> 
+        <script>
+            var elem = document.getElementById('consolelog');
+
+            const socket = io();
+            socket.on("print", (stuff) => {
+                var text = document.createElement('p')
+                text.className = "log_message"
+                text.innerHTML = stuff
+                elem.appendChild(text)
+                window.scrollTo(0, document.body.scrollHeight)
+            })
+            function toggleFullscreen() {
+              if (!document.fullscreenElement) {
+                elem.requestFullscreen().catch(err => {
+                  alert(`Error attempting to enable full-screen mode: ${err.message} (${err})`);
+                });
+              } else {
+                document.exitFullscreen();
+              }
+            }
+            toggleFullscreen()
+        </script>
+    </body>
+</html>
+        

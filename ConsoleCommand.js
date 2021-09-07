@@ -6,6 +6,7 @@ const print = function (stuff) {
 const print_debug = function(stuff) {
 	// console.log(stuff)
 	console.log(chalk.hex("#888888").italic(stuff))
+
 	console_io.emit("print", stuff)
 }
 
@@ -46,7 +47,7 @@ class ConsoleCommand {
 	}
 }
 
-rl.on('line', (input) => {
+rl.on('line', (input) => { // Add in prefix support
   let args = input.split(" ")
   let command_name = args.shift()
   try {
@@ -81,17 +82,25 @@ new ConsoleCommand("crash", "Intentionally crashes nodejs", ["none"], function(a
 })
 
 console_app.get('/console', (req, res) => {
-  res.sendFile(__dirname + '/console.html');
+  res.sendFile(__dirname + '/console.html'); // Fix icon/logo/favicon thing
 })
 
 console_server.listen({
-	host: "192.168.1.240",
-	port: 8000
+	host: "192.168.1.240", // Make this dynamic to get current machine's ipv4 address and also interact with config json
+	port: 8000 // Make this interact with config json
 }, () => {
-	print('listening on *:8000');
+	print('listening on *:8000'); // Make this dynamic config json
 })
 
 module.exports = {
     print: print,
     print_debug: print_debug
 }
+
+// ## List of stuff to add
+// [ ] Get machine's IvP4 address to set default Host
+// [ ] Add in 'console_server_config.json' functionality
+// [ ] Host changes to 'console_server_config.json'
+// [ ] Port changes to 'console_server_config.json'
+// [ ] Prefix support (enabling and setting) in 'console_server_config.json'
+// [ ] Set custom HTML path in 'console_server_config.json'

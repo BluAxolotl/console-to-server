@@ -1,11 +1,11 @@
 ![ConsoleServer Logo](https://i.imgur.com/V8PrJZC.png)
-# ConsoleServer
-
+# ConsoleServer (Beta)
  A module that hosts a local server and outputs console to website
  Useful for people who...
 - Want to view console output on another devide *(linux machine, mobile phone, etc.)*
 - Want to share console with other people
 - Send simple strings to an HTML document
+
 ## Usage
 ```javascript
 const {print, print_debug} = require('console-to-server')
