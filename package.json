@@ -1,6 +1,6 @@
 {
   "name": "console-to-server",
-  "version": "1.0.0",
+  "version": "1.0.5",
   "description": "A module that hosts a local server and outputs console to website",
   "main": "ConsoleCommand.js",
   "scripts": {
