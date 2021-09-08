@@ -47,19 +47,20 @@ Example 'console_server_config.json' file:
 }
 ```
 
-- **enable** (bool): If true, then you have to call ``CONSERV=true`` environment variable to enable server features *(value can literally be anything, just call)*
+- **require_enable** (bool): If true, then you have to call ``CONSERV=true`` environment variable to enable server features *(value can literally be anything, just call)*
 - **print_link** (bool): If true, prints the url of the console server *(if not defined, then it won't print url)*
-- **__server__**
--- **path** (string): Changes the path of the console ``localhost:8000*/path_here*`` *(if not defined, is '/console' by default)*
--- **host** (string): Changes the host of the server *(If not defined, is internal IP by default)*
--- **port** (string): Changes the port of server *(If not defined, is '8000' by default)*
-- **console**
--- **prefix** (string): Sets the prefix to be entered before every command ``$ ping`` *(If not defined, then there is no prefix)*
--- **default_commands** (bool): If false, disables all default commands ``ping, help, testargs`` *(If not defined, then default_commands are enabled)*
-- **html**
--- **styles** (array[String]): An array of css rules to alter the look of the website hosted on server
+- **server:**
+  - **path** (string): Changes the path of the console ``localhost:8000*/path_here*`` *(if not defined, is '/console' by default)*
+  - **host** (string): Changes the host of the server *(If not defined, is internal IP by default)*
+  - **port** (string): Changes the port of server *(If not defined, is '8000' by default)*
+- **console:**
+  - **prefix** (string): Sets the prefix to be entered before every command ``$ ping`` *(If not defined, then there is no prefix)*
+  - **default_commands** (bool): If false, disables all default commands ``ping, help, testargs`` *(If not defined, then default_commands are enabled)*
+- **html:**
+  - **styles** (array[String]): An array of css rules to alter the look of the website hosted on server
 
 ## Screenshots
 Working on a mobile browser!
+
 ![ConsoleServer in a console](https://i.imgur.com/ANcYKzd.png)
 ![ConsoleServer on mobile](https://i.imgur.com/vHVp3Ok.png)

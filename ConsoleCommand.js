@@ -3,12 +3,18 @@
 var chalk = require('chalk');
 const internalIp = require('internal-ip')
 var fs = require('fs')
+const default_config = {
+	require_enable: false,
+	print_link: false
+}
 var inited = false
 var config = null
 var enabled = null
 if (process.env.DEV == null) {
 	if (fs.existsSync('../../console_server_config.json')) {
 		config = require('../../console_server_config.json') // Goes from 'console-to-server' to 'node_modules' to the package base folder
+	} else {
+		config = default_config
 	}
 	enabled = process.env.CONSERV
 	if (config.require_enable == false) {
