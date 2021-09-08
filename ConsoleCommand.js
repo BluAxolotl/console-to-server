@@ -11,9 +11,8 @@ var inited = false
 var config = null
 var enabled = null
 if (process.env.DEV == null) {
-	if (fs.existsSync('../../console_server_config.json')) {
-		config = require('../../console_server_config.json') // Goes from 'console-to-server' to 'node_modules' to the package base folder
-	} else {
+	config = require('../../console_server_config.json')
+	if (config == null) {
 		config = default_config
 	}
 	enabled = process.env.CONSERV
@@ -30,8 +29,7 @@ var Commands = {
 	dict: {}
 }
 
-// Check environment varible
-enabled = (enabled != null)
+console.log(config)
 
 // Exported functions ⬇⬇⬇
 
@@ -66,6 +64,10 @@ const rl = readline.createInterface({
 })
 
 const console_io = new Server(console_server)
+
+if (enabled == null) {
+	enabled = false
+}
 
 // Here's the constructor class. Feel free to make a new one that extends this one to fit your needs! ⬇⬇⬇
 
@@ -164,6 +166,7 @@ if (enabled) {
 	}, () => {
 		inited = true
 		if (config.print_link == true) {
+			print("hello!")
 			print(`ConsoleServer @http://${server_host}:${server_port}${server_path}`)
 		}
 
