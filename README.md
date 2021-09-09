@@ -64,3 +64,10 @@ Working on a mobile browser!
 
 ![ConsoleServer in a console](https://i.imgur.com/ANcYKzd.png)
 ![ConsoleServer on mobile](https://i.imgur.com/vHVp3Ok.png)
+
+## Things I'd like to add:
+- Ability to send input from site *(togglable in 'console_server_config.json')*
+- Try to read everything that prints in the console *(only shows print functions at the moment)*
+  - This also means that I'd add in support for replace line inputs
+- Ability to send output as web request instead of sockets *(useful if you want to send to a pre-existing host or webhooks)*
+- Formatted HTML option *(For those who use chalk or ansi formatting)*
