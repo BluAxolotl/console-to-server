@@ -58,16 +58,10 @@ Example 'console_server_config.json' file:
   - **default_commands** (bool): If false, disables all default commands ``ping, help, testargs`` *(If not defined, then default_commands are enabled)*
 - **html:**
   - **styles** (array[String]): An array of css rules to alter the look of the website hosted on server
+  - **format_ansi** (bool): Converts ANSI formatting to HTML for chalk users *(If not defined, is false)*
 
 ## Screenshots
 Working on a mobile browser!
 
 ![ConsoleServer in a console](https://i.imgur.com/ANcYKzd.png)
 ![ConsoleServer on mobile](https://i.imgur.com/vHVp3Ok.png)
-
-## Things I'd like to add:
-- Ability to send input from site *(togglable in 'console_server_config.json')*
-- Try to read everything that prints in the console *(only shows print functions at the moment)*
-  - This also means that I'd add in support for replace line inputs
-- Ability to send output as web request instead of sockets *(useful if you want to send to a pre-existing host or webhooks)*
-- Formatted HTML option *(For those who use chalk or ansi formatting)*
