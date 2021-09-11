@@ -2,25 +2,32 @@
 
 var chalk = require('chalk');
 const internalIp = require('internal-ip')
-var fs = require('fs')
+var Convert = require('ansi-to-html');
+var convert = new Convert();
+var { exists } = require('fs')
 const default_config = {
 	require_enable: false,
 	print_link: false
 }
 var inited = false
-var config = null
-var enabled = null
-if (process.env.DEV == null) {
+var config = default_config
+try {
 	config = require('../../console_server_config.json')
-	if (config == null) {
+} catch (err) {
+	try {
+		config = require('./console_server_config.json')
+	} catch (err) {
 		config = default_config
 	}
+}
+var enabled = false
+
+if (process.env.DEV == null) {
 	enabled = process.env.CONSERV
 	if (config.require_enable == false) {
 		enabled = true
 	}
 } else {
-	config = require('./console_server_config.json')
 	enabled = true
 }
 
@@ -29,22 +36,51 @@ var Commands = {
 	dict: {}
 }
 
-console.log(config)
-
 // Exported functions ⬇⬇⬇
 
 const print = function (stuff) {
 	console.log(stuff)
 	if (enabled) {
-		console_io.emit("print", stuff)
+		if (config.html.format_ansi) {
+			console_io.emit("print", convert.toHtml(stuff))
+		} else {
+			console_io.emit("print", stuff)
+		}
+	}
+}
+
+const printf = function (stuff) {
+	console.log(stuff)
+	if (enabled) {
+		if (config.html.format_ansi) {
+			console_io.emit("print", convert.toHtml(stuff))
+		} else {
+			console_io.emit("print", stuff)
+		}
+	}
+}
+
+const print_warn = function(stuff) {
+	stuff = chalk.hex("#FFE737")(stuff)
+	console.log(stuff)
+	if (enabled) {
+		console_io.emit("print", convert.toHtml(stuff))
+	}
+}
+
+const print_error = function(stuff) {
+	stuff = chalk.hex("#E03C28").bold(stuff)
+	console.log(stuff)
+	if (enabled) {
+		console_io.emit("print", convert.toHtml(stuff))
 	}
 }
 
 const print_debug = function(stuff) {
-	// console.log(stuff)
-	console.log(chalk.hex("#888888").italic(stuff))
+	stuff = chalk.hex("#888888").italic(stuff)
+	console.log(stuff)
 	if (enabled) {
-		console_io.emit("print", stuff)
+		console_io.emit("print", convert.toHtml(stuff))
 	}
 }
 
@@ -166,7 +202,6 @@ if (enabled) {
 	}, () => {
 		inited = true
 		if (config.print_link == true) {
-			print("hello!")
 			print(`ConsoleServer @http://${server_host}:${server_port}${server_path}`)
 		}
 
@@ -187,17 +222,8 @@ module.exports = {
 // My personal to-do list ⬇⬇⬇
 
 // ## List of stuff to add
-// [x] Get machine's IvP4 address to set default Host
-// [x] Add in 'console_server_config.json' functionality
-// [x] Host changes to 'console_server_config.json'
-// [x] Port changes to 'console_server_config.json'
-// [x] Prefix support (enabling and setting) in 'console_server_config.json'
-// [x] Set custom HTML path in 'console_server_config.json'
-// [x] Adjusting simple HTML parameters (styling, font, text size, show timestamps?) in 'console_server_config.json'
-// [x] Fix icon/logo/favicon thing on html
-// [ ] Update README to show it working on mobile phone browser
-// [x] Environmental Variable that toggles the module (off by default for deploying purposes)
-// [x] Print ip of ConsoleServer when initializing (toggable in 'console_server_config.json')
-// [x] Toggle default commands in 'console_server_config.json'
-// (x) Public Console feature: Allows people to view console server after being deployed (Oh?)
-// ( ) Look into directly streaming all console output
+// [ ] HTML Send console commands
+// [ ] Readable stream process thing
+// [ ] Send outputs as POST requests *(or GET, or PUT)*
+// [ ] Formatted HTML option
+// [ ] 
