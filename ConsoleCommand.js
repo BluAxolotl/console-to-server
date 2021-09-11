@@ -36,16 +36,26 @@ var Commands = {
 	dict: {}
 }
 
+function newline_weird(string) {
+	return string.replace(/\r?\n/g, '<br>$&');
+}
+
 // Exported functions ⬇⬇⬇
 
 const print = function (stuff) {
 	console.log(stuff)
 	if (enabled) {
 		if (config.html.format_ansi) {
-			console_io.emit("print", convert.toHtml(stuff))
+			console_io.emit("print", convert.toHtml(newline_weird(stuff)))
 		} else {
-			console_io.emit("print", stuff)
+			console_io.emit("print", newline_weird(stuff))
 		}
+	}
+}
+
+const print_html = function (stuff) {
+	if (enabled) {
+		console_io.emit("print", newline_weird(stuff))
 	}
 }
 
@@ -53,26 +63,26 @@ const printf = function (stuff) {
 	console.log(stuff)
 	if (enabled) {
 		if (config.html.format_ansi) {
-			console_io.emit("print", convert.toHtml(stuff))
+			console_io.emit("print", convert.toHtml(newline_weird(stuff)))
 		} else {
-			console_io.emit("print", stuff)
+			console_io.emit("print", newline_weird(stuff))
 		}
 	}
 }
 
 const print_warn = function(stuff) {
-	stuff = chalk.hex("#FFE737")(stuff)
+	stuff = chalk.hex("#FFE737")(newline_weird(stuff))
 	console.log(stuff)
 	if (enabled) {
-		console_io.emit("print", convert.toHtml(stuff))
+		console_io.emit("print", convert.toHtml(newline_weird(stuff)))
 	}
 }
 
 const print_error = function(stuff) {
-	stuff = chalk.hex("#E03C28").bold(stuff)
+	stuff = chalk.hex("#E03C28").bold(newline_weird(stuff))
 	console.log(stuff)
 	if (enabled) {
-		console_io.emit("print", convert.toHtml(stuff))
+		console_io.emit("print", convert.toHtml(newline_weird(stuff)))
 	}
 }
 
@@ -80,7 +90,7 @@ const print_debug = function(stuff) {
 	stuff = chalk.hex("#888888").italic(stuff)
 	console.log(stuff)
 	if (enabled) {
-		console_io.emit("print", convert.toHtml(stuff))
+		console_io.emit("print", convert.toHtml(newline_weird(stuff)))
 	}
 }
 
@@ -215,6 +225,9 @@ if (enabled) {
 
 module.exports = {
     print: print,
+    print_html: print_html,
+    print_error: print_error,
+    print_warn: print_warn,
     print_debug: print_debug,
     ConsoleCommand: ConsoleCommand
 }
