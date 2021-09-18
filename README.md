@@ -8,18 +8,7 @@
 
 ## Usage
 ```javascript
-const {print, print_debug} = require('console-to-server')
-
-print('stuff') // Normal printing
-
-print_debug('stuff') // Grey & italics formatting
-```
-And then hosts a server on from your machine's Ipv4 address *``192.168.1.240:8000/console``*
-
-## New ConsoleCommand
-```javascript
-const {print, print_debug} = require('console-to-server')
-const {ConsoleCommand} = require('console-to-server')
+const {ConsoleCommand} = require('console-to-server') // Try to declare this before every other module
 
 new ConsoleCommand("name", "this is a description", ["none"], function () {
     print("this is my custom command!")
@@ -27,13 +16,13 @@ new ConsoleCommand("name", "this is a description", ["none"], function () {
 ```
 
 ## Configuration
-Make a json file named 'console_server_config.json' and then you can configure how the package works!
+Make a json file named 'console_server_config.json' in the root directory and then you can configure how the package works!
 Example 'console_server_config.json' file:
 ```json
 {
   "print_link": true,
   "server": {
-    "port": "1234"
+    "port": "8000"
   },
   "html": {
     "styles": [
@@ -58,7 +47,11 @@ Example 'console_server_config.json' file:
   - **default_commands** (bool): If false, disables all default commands ``ping, help, testargs`` *(If not defined, then default_commands are enabled)*
 - **html:**
   - **styles** (array[String]): An array of css rules to alter the look of the website hosted on server
+    - timestamp (class): This is a class for all timestamps ``opacity: 0.5;``
+		- console_line (class): This is a class that every console_line has ``.console_line { color: white }``
+		- 
   - **format_ansi** (bool): Converts ANSI formatting to HTML for chalk users *(If not defined, is false)*
+  - **show_timestamps** (bool): Toggles timestamp on console lines *(If not defined, then false)*
 
 ## Screenshots
 Working on a mobile browser!

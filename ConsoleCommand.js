@@ -3,6 +3,7 @@
 var chalk = require('chalk');
 const internalIp = require('internal-ip')
 var Convert = require('ansi-to-html');
+const date = require('date-and-time')
 var convert = new Convert();
 var { exists } = require('fs')
 const default_config = {
@@ -31,6 +32,11 @@ if (process.env.DEV == null) {
 	enabled = true
 }
 
+var show_timestamps = false
+if (config.html  != null && config.html.show_timestamps != null) {
+	show_timestamps = config.html.show_timestamps
+}
+
 var Commands = {
 	array: [],
 	dict: {}
@@ -42,57 +48,131 @@ function newline_weird(string) {
 
 // Exported functions ⬇⬇⬇
 
-const print = function (stuff) {
-	console.log(stuff)
-	if (enabled) {
-		if (config.html.format_ansi) {
-			console_io.emit("print", convert.toHtml(newline_weird(stuff)))
-		} else {
-			console_io.emit("print", newline_weird(stuff))
-		}
-	}
+if (console.everything === undefined)
+{
+    console.everything = [];
+
+    console.defaultLog = console.log.bind(console);
+    console.log = function(){
+			let real_time = date.format(new Date(), 'hh:mm:ss A')
+				let obj = {"type":"log", "datetime":real_time, "value":Array.from(arguments)}
+        console.defaultLog.apply(console, arguments);
+				let stuff = Array.from(arguments).join(" ")
+				if (enabled) {
+					if (config.html.format_ansi) {
+						let thing = convert.toHtml(newline_weird(stuff))
+						obj["html"] = thing
+						console_io.emit("print", JSON.stringify(obj))
+					} else {
+						let thing = newline_weird(stuff)
+						obj["html"] = thing
+						console_io.emit("print", JSON.stringify(obj))
+					}
+				}
+				console.everything.push(obj);
+    }
+    console.defaultError = console.error.bind(console);
+    console.error = function(){
+				let real_time = date.format(new Date(), 'hh:mm:ss A')
+				let obj = {"type":"error", "datetime":real_time, "value":Array.from(arguments)}
+        console.defaultError.apply(console, arguments);
+				let stuff = Array.from(arguments).join(" ")
+				// stuff = chalk.hex("#E03C28").bold(newline_weird(stuff))
+				if (enabled) {
+					let thing = convert.toHtml(newline_weird(stuff))
+					obj["html"] = thing
+					console_io.emit("print", JSON.stringify(obj))
+				}
+				console.everything.push(obj)
+    }
+    console.defaultWarn = console.warn.bind(console);
+    console.warn = function(){
+				let real_time = date.format(new Date(), 'hh:mm:ss A')
+				let obj = {"type":"warn", "datetime":real_time, "value":Array.from(arguments)}
+        console.defaultWarn.apply(console, arguments);
+				let stuff = Array.from(arguments).join(" ")
+				// stuff = chalk.hex("#FFE737")(newline_weird(stuff))
+				if (enabled) {
+					let thing = convert.toHtml(newline_weird(stuff))
+					obj["html"] = thing
+					console_io.emit("print", JSON.stringify(obj))
+				}
+				console.everything.push(obj)
+    }
+    console.defaultDebug = console.debug.bind(console);
+    console.debug = function(){
+				let real_time = date.format(new Date(), 'hh:mm:ss A')
+				let obj = {"type":"debug", "datetime":real_time, "value":Array.from(arguments)}
+        console.defaultDebug.apply(console, arguments);
+				let stuff = Array.from(arguments).join(" ")
+				// stuff = chalk.hex("#888888").italic(stuff)
+				if (enabled) {
+					let thing = convert.toHtml(newline_weird(stuff))
+					obj["html"] = thing
+					console_io.emit("print", JSON.stringify(obj))
+				}
+				console.everything.push(obj)
+    }
 }
+
+const print = console.log
+const print_warn = console.warn
+const print_error = console.error
+const print_debug = console.debug
+
+// const print = function (stuff) {
+// 	console.log(stuff)
+// 	if (enabled) {
+// 		if (config.html.format_ansi) {
+// 			console_io.emit("print", convert.toHtml(newline_weird(stuff)))
+// 		} else {
+// 			console_io.emit("print", newline_weird(stuff))
+// 		}
+// 	}
+// }
 
 const print_html = function (stuff) {
 	if (enabled) {
+		let real_time = date.format(new Date(), 'hh:mm:ss A')
+		if (show_timestamps) { stuff = `<span class="timestamp"><em>[${real_time}] </em></span>`+stuff }
 		console_io.emit("print", newline_weird(stuff))
 	}
 }
 
-const printf = function (stuff) {
-	console.log(stuff)
-	if (enabled) {
-		if (config.html.format_ansi) {
-			console_io.emit("print", convert.toHtml(newline_weird(stuff)))
-		} else {
-			console_io.emit("print", newline_weird(stuff))
-		}
-	}
-}
+// const printf = function (stuff) {
+// 	console.log(stuff)
+// 	if (enabled) {
+// 		if (config.html.format_ansi) {
+// 			console_io.emit("print", convert.toHtml(newline_weird(stuff)))
+// 		} else {
+// 			console_io.emit("print", newline_weird(stuff))
+// 		}
+// 	}
+// }
 
-const print_warn = function(stuff) {
-	stuff = chalk.hex("#FFE737")(newline_weird(stuff))
-	console.log(stuff)
-	if (enabled) {
-		console_io.emit("print", convert.toHtml(newline_weird(stuff)))
-	}
-}
+// const print_warn = function(stuff) {
+// 	stuff = chalk.hex("#FFE737")(newline_weird(stuff))
+// 	console.log(stuff)
+// 	if (enabled) {
+// 		console_io.emit("print", convert.toHtml(newline_weird(stuff)))
+// 	}
+// }
 
-const print_error = function(stuff) {
-	stuff = chalk.hex("#E03C28").bold(newline_weird(stuff))
-	console.log(stuff)
-	if (enabled) {
-		console_io.emit("print", convert.toHtml(newline_weird(stuff)))
-	}
-}
+// const print_error = function(stuff) {
+// 	stuff = chalk.hex("#E03C28").bold(newline_weird(stuff))
+// 	console.log(stuff)
+// 	if (enabled) {
+// 		console_io.emit("print", convert.toHtml(newline_weird(stuff)))
+// 	}
+// }
 
-const print_debug = function(stuff) {
-	stuff = chalk.hex("#888888").italic(stuff)
-	console.log(stuff)
-	if (enabled) {
-		console_io.emit("print", convert.toHtml(newline_weird(stuff)))
-	}
-}
+// const print_debug = function(stuff) {
+// 	stuff = chalk.hex("#888888").italic(stuff)
+// 	console.log(stuff)
+// 	if (enabled) {
+// 		console_io.emit("print", convert.toHtml(newline_weird(stuff)))
+// 	}
+// }
 
 // Server startup and configuration ⬇⬇⬇
 
@@ -179,12 +259,12 @@ if (config.console == null || config.console.default_commands == true) {
 		print_debug(`The arguments were ${args[0]} & ${args[1]}`)
 	})
 
-	new ConsoleCommand("send", "Sends to web server", ["stuff..."], function(args) {
-		console_io.emit("print", (args.join(" ")))
-	})
-
 	new ConsoleCommand("crash", "Intentionally crashes nodejs", ["none"], function(args) {
-		nonexistant()
+		try {
+			nonexistant()
+		} catch(err) {
+			print_error(err)
+		}
 	})
 }
 
@@ -201,8 +281,17 @@ var server_port = (config.server && config.server.port ? config.server.port : 80
 
 console_io.on('connection', socket => {
 	if (config.html != null && config.html.styles != null) {
-		socket.emit("html_init", JSON.stringify(config.html.styles))
+		let json = JSON.stringify({
+			styles: config.html.styles,
+			current_console: console.everything,
+			timestamp: show_timestamps,
+		})
+		socket.emit("html_init", json)
 	}
+})
+
+console_io.on('consolelog', i => {
+	console.log(i)
 })
 
 if (enabled) {
@@ -216,7 +305,12 @@ if (enabled) {
 		}
 
 		if (config.html != null && config.html.styles != null) {
-			console_io.emit("html_init", JSON.stringify(config.html.styles))
+			let json = JSON.stringify({
+				styles: config.html.styles,
+				current_console: console.everything,
+				timestamp: show_timestamps,
+			})
+			console_io.emit("html_init", json)
 		}
 	})
 }
