@@ -10,18 +10,35 @@
             .console_line {
                 color:  white;
             }
+
+						input {
+							background-color: #000000;
+							border: none;
+							width: 99%;
+						}
         </style>
     </head>
     <body>
         <div id="consolelog">
         </div>
+				<form id="form" action=""><input type="text" id="line" class="console_line"></input></form>
         <script src="/socket.io/socket.io.js"></script> 
         <script>
             var elem = document.getElementById('consolelog');
             var custom_style = document.createElement('style')
+						var input = document.getElementById('line')
+						var form = document.getElementById('form')
 						var timestamps = false
 
             const socket = io();
+
+						form.addEventListener('submit', function(e) {
+							e.preventDefault();
+							if (input.value) {
+								socket.emit('input', input.value);
+								input.value = '';
+							}
+						})
 
 						function log_append(append_obj) {
 							if (typeof(append_obj) == "string") { append_obj = JSON.parse(append_obj) }

@@ -215,30 +215,32 @@ class ConsoleCommand {
 // Reading Console Input ⬇⬇⬇
 
 if (enabled) {
-	rl.on('line', (input) => {
-	  let run = false
-	  let args = input.split(" ")
-	  if (config.console && config.console.prefix) {
-		let prefix = args.shift()
-		run = (config.console && prefix == config.console.prefix)
-	  } else {
-		run = true
-	  }
-	  let command_name = args.shift()
-	  if (run) {
-		  try {
-		  	let command = Commands.dict[command_name]
-		  	if (command) {
-		  		command.exec(args)
-		  	} else {
-		  		print_debug(`Command '${command_name}' does not exist`)
-		  	}
-		  } catch (err) {
-			print_debug(String(err))
-		  }
-	  }
-	})
+	rl.on('line', console_input)
 }
+
+function console_input(input) {
+	let run = false
+	let args = input.split(" ")
+	if (config.console && config.console.prefix) {
+	let prefix = args.shift()
+	run = (config.console && prefix == config.console.prefix)
+	} else {
+	run = true
+	}
+	let command_name = args.shift()
+	if (run) {
+		try {
+			let command = Commands.dict[command_name]
+			if (command) {
+				command.exec(args)
+			} else {
+				print_debug(`Command '${command_name}' does not exist`)
+			}
+		} catch (err) {
+		print_debug(String(err))
+		}
+	}
+} 
 
 // Default Commands ⬇⬇⬇
 
@@ -287,11 +289,13 @@ console_io.on('connection', socket => {
 			timestamp: show_timestamps,
 		})
 		socket.emit("html_init", json)
-	}
-})
 
-console_io.on('consolelog', i => {
-	console.log(i)
+		socket.on('input',console_input)
+
+		socket.on('consolelog', i => {
+			console.log(i)
+		})
+	}
 })
 
 if (enabled) {
