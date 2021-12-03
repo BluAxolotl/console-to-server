@@ -8,48 +8,64 @@
 
 ## Usage
 ```javascript
-const {ConsoleCommand} = require('console-to-server') // Try to declare this before every other module
+const { ConsoleServer } = require('./ConsoleCommand.js')
 
-new ConsoleCommand("name", "this is a description", ["none"], function () {
+ConsoleServer.init()
+
+const { print, print_debug, print_error, print_warn } = require('./ConsoleCommand.js') // comepletely optional, console.log just sucks bawlls
+
+print("Text!")
+print_debug("Debug!")
+print_error("Error!")
+print_warn("Warning!")
+
+const { ConsoleCommand } = require('./ConsoleCommand.js')
+
+new ConsoleCommand("name", "this is a description", ["none"], function (args) {
     print("this is my custom command!")
 })
 ```
 
 ## Configuration
-Make a json file named 'console_server_config.json' in the root directory and then you can configure how the package works!
-Example 'console_server_config.json' file:
-```json
-{
-  "print_link": true,
-  "server": {
-    "port": "8000"
+
+```js
+ConsoleServer.init({
+  print_link: false,
+  server: {
+    port: 8000
   },
-  "html": {
-    "styles": [
-      "body { background: #231f23 }",
-      ".log_message { color: #FFF; font-family: FreeMono, monospace }"
-    ]
+  html: {
+    styles: [
+      ".timestamp { color: #4f4f4f; font-weight: normal }",
+      "body { background: #000000 }",
+      ".console_line { font-family: FreeMono, monospace }",
+      ".warn { color: #ffe737 }",
+      ".error { color: #e03c28; font-weight: bold; }",
+      ".debug { color: #7b7b7b; font-style: italic }",
+    ],
+    show_timestamps: true
   },
-  "console": {
-    "default_commands": true
+  console: {
+    default_commands: true
   }
-}
+})
 ```
 
-- **require_enable** (bool): If true, then you have to call ``CONSERV=true`` environment variable to enable server features *(value can literally be anything, just call)*
 - **print_link** (bool): If true, prints the url of the console server *(if not defined, then it won't print url)*
 - **server:**
-  - **path** (string): Changes the path of the console ``localhost:8000*/path_here*`` *(if not defined, is '/console' by default)*
   - **host** (string): Changes the host of the server *(If not defined, is internal IP by default)*
   - **port** (string): Changes the port of server *(If not defined, is '8000' by default)*
+  - **path** (string): Changes the path of the console ``localhost:8000*/path_here*`` *(if not defined, is '/console' by default)*
 - **console:**
   - **prefix** (string): Sets the prefix to be entered before every command ``$ ping`` *(If not defined, then there is no prefix)*
   - **default_commands** (bool): If false, disables all default commands ``ping, help, testargs`` *(If not defined, then default_commands are enabled)*
 - **html:**
   - **styles** (array[String]): An array of css rules to alter the look of the website hosted on server
     - timestamp (class): This is a class for all timestamps ``opacity: 0.5;``
-		- console_line (class): This is a class that every console_line has ``.console_line { color: white }``
-		- 
+    - console_line (class): This is a class that every console_line has ``.console_line { color: white }``
+    - warn (class): This is a class that all the console.warn lines have ``.warn { color: #ffe737 }``
+    - error (class): This is a class that all the console.error lines have ``.error { color: #e03c28; font-weight: bold; }``
+    - debug (class): This is a class that all the console.debug lines have ``.debug { color: #7b7b7b; font-style: italic }``
   - **format_ansi** (bool): Converts ANSI formatting to HTML for chalk users *(If not defined, is false)*
   - **show_timestamps** (bool): Toggles timestamp on console lines *(If not defined, then false)*
 
